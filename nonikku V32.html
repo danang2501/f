@@ -1,0 +1,3241 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nonikku — Final Connected</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#02102a; --bg2:#042445; --muted:#e6e9ff; --gold:#d9b66a;
+  --paper:#fff8ef; --ink:#071022; --accent:#b77d3b;
+  --darkNotifyBg:#0b1726; --darkNotifyText:#ffffff;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:"Playfair Display",Georgia,serif;background:
+  radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.02), transparent 8%),
+  linear-gradient(180deg,var(--bg1),var(--bg2)); color:var(--muted); -webkit-font-smoothing:antialiased; overflow-x: hidden;}
+
+.container {
+  max-width: 980px;
+  margin: 5px auto;
+  padding: 8px;
+  position: relative;
+  z-index: 5;
+}
+
+.center-card {
+  max-width: 920px;
+  margin: 5px auto;
+  padding: 15px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+}
+
+.page {
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(6px);
+  transition:all .44s ease;
+  min-height: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* Stars background */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;opacity:0;animation:twinkle 4s linear infinite}
+@keyframes twinkle{0%{opacity:0}40%{opacity:1}60%{opacity:0.6}100%{opacity:0}}
+
+/* Komet realistis dengan nuansa langit misterius */
+.comets-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.comet {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(45deg, #ffffff, #a8d8ff, #64b5f6);
+  border-radius: 50%;
+  filter: blur(1px);
+  box-shadow: 
+    0 0 10px 2px rgba(168, 216, 255, 0.8),
+    0 0 20px 4px rgba(100, 181, 246, 0.6),
+    0 0 30px 6px rgba(66, 165, 245, 0.4);
+  opacity: 0;
+}
+
+.comet::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  filter: blur(1px);
+}
+
+.comet::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 216, 255, 0.6), transparent);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  filter: blur(2px);
+}
+
+.comet-tail {
+  position: absolute;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform-origin: left center;
+  filter: blur(3px);
+}
+
+@keyframes cometFly {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px) translateY(-100px) rotate(-45deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(100vw + 100px)) translateY(calc(100vh + 100px)) rotate(-45deg);
+  }
+}
+
+@keyframes cometTail {
+  0% {
+    opacity: 0;
+    transform: scaleX(0) rotate(-45deg);
+  }
+  10% {
+    opacity: 0.8;
+    transform: scaleX(1) rotate(-45deg);
+  }
+  90% {
+    opacity: 0.8;
+    transform: scaleX(1) rotate(-45deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(0) rotate(-45deg);
+  }
+}
+
+/* Efek glow tambahan untuk komet */
+.comet-glow {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(5px);
+  animation: glowPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Piano staff decorative bottom */
+.piano-staff{
+  position:fixed;left:0;right:0;bottom:0;height:140px;pointer-events:none;
+  background-image:
+    linear-gradient(transparent, rgba(255,255,255,0.01)),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="140"><g fill="none" stroke="%23ffffff" stroke-opacity="0.03" stroke-width="1"><path d="M10 28 H1390"/><path d="M10 44 H1390"/><path d="M10 60 H1390"/><path d="M10 76 H1390"/><path d="M10 92 H1390"/></g></svg>');
+  background-repeat:repeat-x;background-position:center bottom;opacity:0.85;
+}
+
+.page:not(#page1) .center-card {
+  margin-top: 10px;
+}
+
+/* Birthday message */
+.big-birthday-message {
+  text-align: center;
+  margin: 15px 0 10px 0;
+  font-family: 'Great Vibes', cursive;
+  color: var(--muted);
+  opacity: 0.9;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.birthday-main {
+  font-size: 48px;
+  margin-bottom: 5px;
+  line-height: 1.1;
+}
+
+.birthday-sub {
+  font-size: 28px;
+  opacity: 0.8;
+}
+
+/* PERUBAHAN: Style khusus untuk halaman password */
+#page1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+#page1 .center-card {
+  margin-top: 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+#page1.show ~ .top-left {
+  display: none;
+}
+
+/* Top controls */
+.top-left{position:fixed;left:18px;top:18px;z-index:260}
+.top-right{position:fixed;right:18px;top:18px;z-index:260}
+
+/* Buttons */
+.raised, .btn {
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.8));
+  border:1px solid rgba(255,255,255,0.12); color:white; font-weight:700; cursor:pointer;
+  transition:all .28s cubic-bezier(.2,.9,.2,1); box-shadow:0 8px 22px rgba(0,0,0,0.45);
+}
+.raised:hover, .btn:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 14px 34px rgba(0,0,0,0.55); }
+.raised:active, .btn:active { transform:translateY(0) scale(.98); box-shadow:0 6px 14px rgba(0,0,0,0.35); }
+
+#settingsBtn { animation:pulse 4s ease-in-out infinite; border-radius:12px; }
+@keyframes pulse{0%,100%{box-shadow:0 0 0 rgba(255,255,255,0);}50%{box-shadow:0 0 16px rgba(255,255,255,0.06);}}
+
+/* Pages */
+.page.show{opacity:1;visibility:visible;transform:translateY(0)}
+
+/* PW */
+.pw-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px;text-align:center}
+.pw-input{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:var(--muted);width:240px;font-size:16px}
+
+/* PERBAIKAN: Layout halaman 2 yang lebih kompak */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.main-content {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* PERBAIKAN: Slider yang lebih kompak */
+.slider{width:100%;height:150px;overflow:hidden;border-radius:12px;margin-bottom:8px;position:relative;border:1px solid rgba(255,255,255,0.04)}
+.slider-track{display:flex;height:100%;transition:transform .9s cubic-bezier(.2,.9,.2,1)}
+.slide{flex:0 0 100%;height:100%;background-size:cover;background-position:center;position:relative;display:flex;align-items:center;justify-content:center;flex-direction: column;padding:12px;}
+.slide-overlay{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.28));border-radius:12px}
+.slide-title{position:relative;font-family:"Great Vibes",cursive;font-size:26px;color:#fff;text-shadow:0 6px 18px rgba(0,0,0,0.6);margin-bottom:4px;z-index:2;}
+.slide-text{position:relative;color:#fff;font-size:13px;text-align:center;max-width:90%;z-index:2;text-shadow:0 2px 6px rgba(0,0,0,0.6);line-height:1.3;}
+
+/* Bingkai foto tambahan */
+.photo-frames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.photo-frame {
+  width: 300px;
+  height: 180px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.1);
+  transition: all 0.5s ease;
+}
+
+.photo-frame.locked {
+  filter: grayscale(1) blur(2px);
+  opacity: 0.7;
+}
+
+.photo-frame.locked::after {
+  content: '🔒';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  z-index: 10;
+}
+
+.frame-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(2,16,42,0.8), rgba(4,36,69,0.9));
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+.frame-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-family: 'Great Vibes', cursive;
+}
+
+.frame-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.frame-item {
+  background: rgba(255,255,255,0.1);
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+/* PERUBAHAN: Judul untuk bagian foto yang lebih besar dan menonjol */
+.photo-section-title {
+  text-align: center;
+  font-family: 'Great Vibes', cursive;
+  font-size: 38px;
+  color: var(--muted);
+  margin-top: 15px;
+  margin-bottom: 10px;
+  opacity: 0.9;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.photo-section-container {
+  margin-top: 5px;
+}
+
+/* Poem */
+.poem-box{
+  margin-top:10px;
+  padding:15px;
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--paper),#fff9f2);
+  color:var(--ink);
+  border:1px solid rgba(0,0,0,0.06);
+  max-width:820px;
+  text-align:left;
+  font-size: 15px;
+}
+
+/* PERUBAHAN: Style untuk puisi bahasa Jawa */
+.jawa-poem-box {
+  margin-top:10px;
+  padding:15px;
+  border-radius:14px;
+  background:linear-gradient(180deg, #fff8f0, #fff0e0);
+  color:#5a3921;
+  border:2px solid #d4a574;
+  max-width:820px;
+  text-align:center;
+  font-size: 15px;
+  font-family: 'Playfair Display', serif;
+  box-shadow: 0 8px 25px rgba(90, 57, 33, 0.2);
+}
+
+/* PERUBAHAN: Style untuk puisi dengan bahasa Sansekerta */
+.sanskrit-poem-box {
+  margin-top:10px;
+  padding:15px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff9f0, #fff4e6);
+  color: #4a3424;
+  border: 3px solid #c19a6b;
+  max-width:820px;
+  text-align:center;
+  font-size: 15px;
+  font-family: 'Playfair Display', serif;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.sanskrit-poem-box::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 1px solid #a67c52;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* PERUBAHAN BARU: Style untuk konten terkunci */
+.locked-section {
+  position: relative;
+}
+
+.locked-content {
+  filter: blur(5px);
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+  transition: all 0.5s ease;
+}
+
+.locked-content::after {
+  content: '🔒 Terselesaikan setelah Game TTS';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--gold);
+  font-weight: bold;
+}
+
+/* PERUBAHAN: Layout yang lebih kompak untuk halaman utama */
+.poem-container {
+  flex: 1;
+  min-width: 320px;
+}
+
+/* PERUBAHAN BARU: Game kecil di bawah puisi */
+.mini-game-container {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mini-game-title {
+  text-align: center;
+  font-family: 'Great Vibes', cursive;
+  font-size: 24px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+/* Game Memory Card */
+.memory-game {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.memory-card {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  position: relative;
+}
+
+.memory-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.memory-card .front,
+.memory-card .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.memory-card .front {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.memory-card .back {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  transform: rotateY(180deg);
+}
+
+/* Game Puzzle */
+.puzzle-game {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.puzzle-piece {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: move;
+  user-select: none;
+}
+
+.puzzle-piece.correct {
+  background: linear-gradient(135deg, #5eff5e, #00ff00);
+}
+
+/* Game Cari Kata */
+.word-search {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.word-cell {
+  width: 35px;
+  height: 35px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.word-cell.selected {
+  background: linear-gradient(135deg, #ffcc00, #ffaa00);
+}
+
+.word-cell.found {
+  background: linear-gradient(135deg, #00ff88, #00cc66);
+}
+
+/* Style untuk spoiler section */
+.spoiler-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.spoiler-title {
+  text-align: center;
+  font-family: 'Great Vibes', cursive;
+  font-size: 32px;
+  color: var(--muted);
+  margin-bottom: 15px;
+  opacity: 0.9;
+  letter-spacing: 2px;
+}
+
+.spoiler-content {
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* PERUBAHAN: Bagian 9 Bulan Kita lebih kompak */
+.nine-months-section {
+  margin-top: 20px;
+  animation: fadeInUp 1.2s ease-out;
+}
+
+.nine-months-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: 4px solid rgba(255,255,255,0.2);
+}
+
+.nine-months-text {
+  text-align: center;
+  font-size: 20px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-family: 'Great Vibes', cursive;
+}
+
+.nine-months-content {
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.nine-months-content p {
+  margin-bottom: 15px;
+}
+
+/* Style untuk timeline */
+.memory-section {
+  margin-top: 20px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.quotes-section {
+  margin-top: 20px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.countdown-section {
+  margin-top: 20px;
+  animation: fadeInUp 1.2s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Settings panel */
+.settings-panel{position:fixed;right:20px;top:70px;z-index:280;width:340px;border-radius:12px;background:linear-gradient(180deg,#fffaf0,#fff6ea);border:1px solid rgba(0,0,0,0.06);padding:14px;box-shadow:0 28px 80px rgba(0,0,0,0.45);transform-origin:top right;transform:translateY(-8px) scaleY(0);opacity:0;transition:all .36s ease}
+.settings-panel.show{transform:translateY(0) scaleY(1);opacity:1}
+.settings-panel h4{margin:0 0 8px 0;color:#2b2b2b}
+.settings-panel .desc{font-size:13px;color:#4b4b4b}
+
+/* PERUBAHAN BARU: Layout TTS yang lebih presisi ke kiri */
+.cross-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: -10px;
+}
+
+/* Grid (crossword) */
+.cross{display:grid;grid-template-columns:repeat(10,40px);grid-auto-rows:40px;gap:4px;margin:0}
+.cell{width:40px;height:40px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;overflow:visible}
+.cell input{width:100%;height:100%;border:none;background:transparent;text-align:center;font-weight:700;color:#081022;font-size:20px;outline:none}
+.gap{width:40px;height:40px}
+.num{position:absolute;left:4px;top:2px;font-size:12px;color:#222;opacity:0.6}
+
+/* Clues */
+.clues{margin-top:12px}
+.clue{padding:10px;border-radius:10px;margin-bottom:8px;background:#fffef8;border:1px solid rgba(0,0,0,0.04);color:#2e2e2e}
+
+/* Judul TTS */
+.tts-title {
+  text-align: center;
+  font-family: 'Great Vibes', cursive;
+  font-size: 32px;
+  color: var(--muted);
+  margin-bottom: 15px;
+  opacity: 0.9;
+  letter-spacing: 1px;
+}
+
+/* Center notification */
+.center-notify{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);z-index:320;display:none;width:520px;max-width:92%;padding:22px;border-radius:16px;background:linear-gradient(180deg,var(--paper),#fff);color:var(--ink);border:1px solid rgba(0,0,0,0.06);box-shadow:0 28px 90px rgba(0,0,0,0.55);text-align:center;font-family:"Playfair Display",serif;transform-origin:center}
+.center-notify.dark{background:var(--darkNotifyBg);color:var(--darkNotifyText);border:1px solid rgba(255,255,255,0.06);}
+.center-notify.show{display:block;animation:notifIn .56s cubic-bezier(.2,.9,.2,1) forwards}
+.center-notify.hide{animation:notifOut .48s cubic-bezier(.4,.85,.4,1) forwards}
+@keyframes notifIn{0%{opacity:0;transform:translate(-50%,-35%) scale(.94)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes notifOut{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-35%) scale(.96)}}
+.center-notify .title{font-size:20px;font-weight:700;margin-bottom:6px}
+.center-notify .sub{margin-top:6px}
+.center-notify .close-x{position:absolute;right:12px;top:12px;background:transparent;color:inherit;border-radius:10px;border:1px solid rgba(255,255,255,0.06);padding:6px 8px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12)}
+.center-notify .icon{font-size:44px;margin-bottom:8px}
+
+/* Blur overlay untuk notifikasi */
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 310;
+  display: none;
+}
+
+/* modal back btn */
+.modal-back{position:fixed;left:18px;top:18px;z-index:330;display:none}
+.modal-back.show{display:inline-flex}
+
+/* tiny notify */
+#notifyTiny{position:fixed;left:50%;top:12%;transform:translateX(-50%);z-index:340;display:none;background:var(--paper);color:var(--ink);padding:8px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.25);font-family:Georgia,serif}
+
+/* Game Pages */
+.game-page { display: none; }
+.game-page.active { display: block; }
+
+/* Game 1: Shooter Game */
+.game-container {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background: #000;
+  border: 4px solid #fff;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+#player1 {
+  position: absolute;
+  width: 50px;
+  height: 40px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  transition: left 0.1s ease;
+}
+
+.airplane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.airplane-body {
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(135deg, #e0e0e0, #ffffff);
+  clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+  border-radius: 3px;
+  top: 20%;
+}
+
+.airplane-wing {
+  position: absolute;
+  width: 120%;
+  height: 12px;
+  background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+  bottom: 30%;
+  left: -10%;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
+
+.airplane-cockpit {
+  position: absolute;
+  width: 15px;
+  height: 12px;
+  background: linear-gradient(135deg, #a0a0a0, #c0c0c0);
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 0 0;
+  border: 1px solid #888;
+}
+
+.airplane-tail {
+  position: absolute;
+  width: 12px;
+  height: 15px;
+  background: linear-gradient(135deg, #d0d0d0, #f0f0f0);
+  top: 35%;
+  left: 50%;
+  transform: translateX(-50%);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+}
+
+.engine-fire {
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  background: linear-gradient(to top, #ff4400, #ff8800, #ffff00);
+  border-radius: 50%;
+  bottom: -3px;
+  animation: engineFlicker 0.3s infinite alternate;
+}
+
+.engine-fire.left {
+  left: 6px;
+}
+
+.engine-fire.right {
+  right: 6px;
+}
+
+@keyframes engineFlicker {
+  0% { transform: scaleY(0.8); opacity: 0.7; }
+  100% { transform: scaleY(1.2); opacity: 1; }
+}
+
+.bullet {
+  position: absolute;
+  width: 4px;
+  height: 12px;
+  background: linear-gradient(to top, #ffcc00, #ffaa00, #ff8800);
+  border-radius: 2px;
+  z-index: 4;
+  box-shadow: 0 0 5px #ffcc00, 0 0 2px #ffaa00;
+}
+
+.bullet.fire {
+  animation: bulletFire 0.3s ease-out;
+}
+
+@keyframes bulletFire {
+  0% { transform: scale(1.5); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.enemy {
+  position: absolute;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  color: #000;
+  font-size: 8px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(255,0,0,0.5);
+  border: 1px solid #ff0000;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.enemy.hit {
+  background: linear-gradient(135deg, #ffff00, #ffcc00);
+  transform: scale(1.2);
+  box-shadow: 0 0 12px #ffff00;
+}
+
+.enemy.boss {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #ff0000, #ff6666);
+  font-size: 12px;
+  box-shadow: 0 0 12px #ff0000;
+  border: 2px solid #ff0000;
+  animation: bossPulse 2s infinite;
+  z-index: 4;
+}
+
+@keyframes bossPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.explosion {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ffff00, #ff8800, #ff0000);
+  border-radius: 50%;
+  animation: explode 0.6s forwards;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes explode {
+  0% { transform: scale(0); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ffaa00;
+  border-radius: 50%;
+  animation: particleFloat 1s forwards;
+  pointer-events: none;
+}
+
+@keyframes particleFloat {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.game-ui {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #fff;
+  font-family: monospace;
+  z-index: 10;
+}
+
+.health {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.heart {
+  color: #ff0000;
+  font-size: 16px;
+  transition: opacity 0.3s;
+}
+
+/* Kontrol mobile untuk game 1 */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+  padding: 8px;
+}
+
+.control-btn {
+  width: 45px;
+  height: 45px;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: background 0.2s;
+}
+
+.control-btn:active {
+  background: rgba(255,255,255,0.4);
+}
+
+/* Game 2: Depression Helper */
+.depression-game {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 15px;
+}
+
+.thought-bubble {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 15px;
+  margin: 15px 0;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  color: #333;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.thought-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid rgba(255, 255, 255, 0.9);
+}
+
+.positive-option {
+  background: linear-gradient(135deg, #8a6bc9, #5a8dee);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  margin: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.positive-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Game 3: Emotional Journey */
+.emotional-game {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 15px;
+}
+
+.emotional-scene {
+  background: rgba(0,0,0,0.9);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px 0;
+  color: white;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid white;
+  font-family: 'Courier New', monospace;
+}
+
+.typing-text {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  border-right: 2px solid white;
+  white-space: pre-wrap;
+  overflow: hidden;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { border-color: white; }
+  50% { border-color: transparent; }
+}
+
+.undertale-dialog {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: left;
+  width: 100%;
+}
+
+.dialog-speaker {
+  color: #ffff00;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.dialog-text {
+  color: white;
+  margin-bottom: 15px;
+  min-height: 50px;
+}
+
+/* Screen blink effect */
+.screen-blink {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Love Letter */
+.love-letter {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.love-letter.open {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.letter-content {
+  font-family: 'Playfair Display', serif;
+  line-height: 1.6;
+  color: var(--ink);
+  font-size: 15px;
+  white-space: pre-line;
+}
+
+.letter-signature {
+  text-align: right;
+  margin-top: 20px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Animasi kedip */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.blink {
+  animation: blink 1.5s infinite;
+}
+
+/* Tombol lanjut */
+.next-btn {
+  display: block;
+  margin: 15px auto;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.next-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Pertanyaan Bahagia */
+.happiness-question {
+  background: rgba(0,0,0,0.8);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px 0;
+  color: white;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid white;
+}
+
+.happiness-input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid white;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  width: 200px;
+  font-size: 15px;
+  margin: 10px 0;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+
+/* PERUBAHAN BARU: Partitur musik interaktif */
+.music-staff {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(to bottom, #fff8f0, #fff0e0);
+  border-radius: 10px;
+  margin: 20px 0;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  border: 2px solid #c19a6b;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.music-staff:active {
+  cursor: grabbing;
+}
+
+.staff-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      to bottom,
+      #000,
+      #000 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  background-size: 100% 100px;
+  background-position: 0 10px;
+}
+
+.music-notes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.note {
+  position: absolute;
+  font-size: 24px;
+  color: #b77d3b;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.note.animated {
+  animation: noteBounce 0.5s ease-in-out;
+}
+
+@keyframes noteBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.staff-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.staff-btn {
+  padding: 8px 15px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.staff-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.staff-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Style untuk bintang berkedip tambahan */
+.twinkling-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.twinkling-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media(max-width:920px){ 
+  .cross{grid-template-columns:repeat(10,36px);grid-auto-rows:36px}.cell{width:36px;height:36px}.gap{width:36px;height:36px} 
+  .cell input { font-size: 18px; }
+  .slide-title{font-size:22px} 
+  .slide-text{font-size:12px;}
+  .photo-frames { flex-direction: column; align-items: center; }
+  .photo-frame { width: 100%; max-width: 280px; }
+  .tts-title { font-size: 22px; }
+  .birthday-main { font-size: 38px; }
+  .birthday-sub { font-size: 22px; }
+  .photo-section-title { font-size: 28px; }
+  .main-content {
+    flex-direction: column;
+  }
+  .slider-container, .poem-container {
+    min-width: 100%;
+  }
+  .spoiler-title { font-size: 26px; }
+  .nine-months-circle {
+    width: 140px;
+    height: 140px;
+    font-size: 24px;
+  }
+  .cross-container {
+    justify-content: center;
+    margin-left: 0;
+  }
+  .memory-game {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 280px;
+  }
+  .memory-card {
+    width: 55px;
+    height: 55px;
+  }
+}
+@media(max-width:560px){ 
+  .settings-panel{width:92%;right:4%;top:64px} 
+  .slider{height:130px} 
+  .slide-title{font-size:20px;}
+  .slide-text{font-size:11px; max-width:95%;}
+  .poem-box{font-size:14px} 
+  .center-notify{width:92%} 
+  .game-container { height: 250px; }
+  .control-btn { width: 40px; height: 40px; font-size: 16px; }
+  #player1 { width: 40px; height: 30px; }
+  .tts-title { font-size: 18px; }
+  .birthday-main { font-size: 28px; }
+  .birthday-sub { font-size: 18px; }
+  .photo-section-title { font-size: 22px; }
+  .container {
+    padding: 5px;
+  }
+  .center-card {
+    padding: 10px;
+    margin: 3px auto;
+  }
+  .spoiler-title { font-size: 22px; }
+  .nine-months-circle {
+    width: 120px;
+    height: 120px;
+    font-size: 20px;
+  }
+  .nine-months-text {
+    font-size: 18px;
+  }
+  .cross-container {
+    justify-content: center;
+    margin-left: 0;
+  }
+  .memory-game {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 240px;
+  }
+  .memory-card {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
+
+/* Tampilkan kontrol hanya di mobile */
+@media (hover: hover) {
+  .game-controls {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Decorative -->
+<div class="stars" id="starsLayer"></div>
+<div class="twinkling-stars" id="twinklingStars"></div>
+<div class="comets-container" id="cometsContainer"></div>
+<div class="piano-staff" aria-hidden="true"></div>
+
+<!-- Blur overlay untuk notifikasi -->
+<div class="blur-overlay" id="blurOverlay"></div>
+
+<!-- Screen blink effect -->
+<div class="screen-blink" id="screenBlink"></div>
+
+<!-- Top controls -->
+<div class="top-left"><div id="backRaised" class="raised" title="Kembali">← Kembali</div></div>
+<div class="top-right"><div id="settingsBtn" class="raised" title="Pengaturan">⚙️ Pengaturan</div></div>
+
+<div class="container">
+
+  <!-- PAGE 1: Password -->
+  <section id="page1" class="page show" aria-hidden="false">
+    <div class="center-card">
+      <div class="pw-wrap">
+        <div style="font-size:14px;color:var(--muted)">Masukkan password cintaku dulu ya sayang</div>
+        <input id="pwInput" class="pw-input" placeholder="Masukkan password..." />
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:6px">
+          <button id="pwBtn" class="btn">Masuk</button>
+          <button id="pwHint" class="btn">Petunjuk</button>
+        </div>
+        <div id="pwMsg" style="margin-top:8px;color:var(--muted)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2: Hub -->
+  <section id="page2" class="page" aria-hidden="true">
+    <!-- Birthday message -->
+    <div class="big-birthday-message">
+      <div class="birthday-main">Selamat ulang tahun</div>
+      <div class="birthday-sub">-Melody Nonikku:)-</div>
+    </div>
+    
+    <div class="center-card">
+      <div class="page-content">
+        <div class="main-content">
+          <!-- slider -->
+          <div class="slider-container">
+            <div class="slider" aria-hidden="true">
+              <div id="track" class="slider-track">
+                <!-- Slide 1: Melody -->
+                <div class="slide" style="background:linear-gradient(135deg, #1a237e, #311b92)">
+                  <div class="slide-overlay"></div>
+                  <div class="slide-title">Melody</div>
+                  <div class="slide-text">Kelembutan namamu bagai alunan merdu yang menghiasi hidupku</div>
+                </div>
+                
+                <!-- Slide 2: Drestine -->
+                <div class="slide" style="background:linear-gradient(135deg, #311b92, #4a148c)">
+                  <div class="slide-overlay"></div>
+                  <div class="slide-title">Drestine</div>
+                  <div class="slide-text">Setiap momen bersamamu adalah anugerah terindah dalam hidupku</div>
+                </div>
+                
+                <!-- Slide 3: Putri -->
+                <div class="slide" style="background:linear-gradient(135deg, #4a148c, #12005e)">
+                  <div class="slide-overlay"></div>
+                  <div class="slide-title">Putri</div>
+                  <div class="slide-text">Cantiknya hatimu melebihi segala keindahan di dunia ini</div>
+                </div>
+                
+                <!-- Slide 4: Maharani -->
+                <div class="slide" style="background:linear-gradient(135deg, #12005e, #000051)">
+                  <div class="slide-overlay"></div>
+                  <div class="slide-title">Maharani</div>
+                  <div class="slide-text">Ratuku dalam setiap cerita hidup yang kita tulis bersama</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- poem -->
+          <div class="poem-container">
+            <div class="poem-box">
+              <div style="line-height:1.6;color:#2b2b2b">
+                <p>Di usia tujuh belas, kau hadir bagai mentari<br>
+                Menyinari relung-relung gelap di hati<br>
+                Setiap tatapanmu adalah puisi<br>
+                Yang kutulis dalam diam, penuh arti</p>
+
+                <p>Bekas luka masa lalu, kini mulai sembuh<br>
+                Bersama tawa dan canda yang kau persembah<br>
+                Di setiap langkah, kau tunjukkan jalan<br>
+                Menuju masa depan yang penuh harapan</p>
+
+                <p>Kau adalah kekuatan, kau adalah doa<br>
+                Yang terpanjatkan dalam setiap langkah kita<br>
+                Teruslah berjalan, sayangku yang mulia<br>
+                Bersamamu, hidupku penuh makna</p>
+
+                <p>Di usia yang penuh dengan pencarian ini<br>
+                Aku bersyukur memiliki pendamping sejatimu<br>
+                Terima kasih untuk setiap perhatian dan cinta<br>
+                Yang kau berikan tanpa pernah lelah</p>
+              </div>
+            </div>
+
+            <!-- PERUBAHAN BARU: Game kecil di bawah puisi -->
+            <div class="mini-game-container">
+              <div class="mini-game-title">Game Memory Cinta</div>
+              <div class="memory-game" id="memoryGame">
+                <!-- Kartu akan diisi oleh JavaScript -->
+              </div>
+              <div style="text-align:center;margin-top:10px;">
+                <button id="resetMemoryGame" class="staff-btn">Reset Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Partitur musik interaktif -->
+        <div class="music-staff" id="musicStaff">
+          <div class="staff-lines"></div>
+          <div class="music-notes" id="musicNotes"></div>
+        </div>
+        <div class="staff-controls">
+          <button class="staff-btn" id="addNoteBtn">Tambah Not</button>
+          <button class="staff-btn" id="clearNotesBtn">Hapus Semua</button>
+          <button class="staff-btn" id="playMusicBtn">Mainkan Musik</button>
+        </div>
+
+        <!-- Container untuk bagian foto -->
+        <div class="photo-section-container">
+          <div class="photo-section-title">Secercah Fotomu</div>
+
+          <!-- Bingkai foto tambahan -->
+          <div class="photo-frames">
+            <div class="photo-frame locked" id="photo1">
+              <div class="frame-content">
+                <img src="https://raw.githubusercontent.com/danang2501/k/refs/heads/main/IMG-20250508-WA0112.jpg" 
+                     style="width:100%;height:100%;object-fit:cover" 
+                     alt="Foto Nonikku 1"
+                     onerror="fallbackPhoto(1)">
+              </div>
+            </div>
+            <div class="photo-frame locked" id="photo2">
+              <div class="frame-content">
+                <img src="https://raw.githubusercontent.com/danang2501/q/refs/heads/main/IMG-20250508-WA0384.jpg" 
+                     style="width:100%;height:100%;object-fit:cover" 
+                     alt="Foto Nonikku 2"
+                     onerror="fallbackPhoto(2)">
+              </div>
+            </div>
+            <div class="photo-frame locked" id="photo3">
+              <div class="frame-content">
+                <img src="https://raw.githubusercontent.com/danang2501/k/refs/heads/main/IMG-20250508-WA0113.jpg" 
+                     style="width:100%;height:100%;object-fit:cover" 
+                     alt="Foto Nonikku 3"
+                     onerror="fallbackPhoto(3)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bagian 9 Bulan Kita -->
+        <div class="nine-months-section">
+          <div class="nine-months-text">9 Bulan Kita</div>
+          
+          <div class="nine-months-circle">9 Bulan</div>
+          
+          <div class="nine-months-content">
+            <p>Kita telah melalui banyak <strong>Rintangan yang banyak</strong>, mulai dari <strong>Memberanikan berkrnalan</strong> dengan mamamu, <strong>Pads akhitnya </strong>  kepada papamu dan orang tuaku.</p>
+            
+            <p>Dalam perjalanan ini, kita juga banyak mengalami <strong>pertengkaran</strong> . Namun, di balik semua <strong>masalah apapun</strong>  itu, kita selalu menemukan jalan untuk kembali saling memahami. aku akan memakai bahasa sansakerta jika kamu bisa mengartikan</p>
+            
+            <p>kita<strong>kathinai</strong> , tentu tidak luput juga kita memiliki <strong>sukha-samaya</strong>  dan <strong>ananda ke pal</strong> . Setiap tawa dan kebahagiaan itulah yang menjadi <strong>amrit</strong>  dan penguat bagi <strong>sambandh</strong>kita.</p>
+          </div>
+        </div>
+
+        <!-- Timeline Kenangan -->
+        <div class="memory-section">
+          <div class="photo-section-title" style="font-size: 32px; margin-bottom: 15px;">Perjalanan Kita</div>
+          
+          <div style="background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+              <!-- Timeline Item 1 -->
+              <div style="display: flex; align-items: flex-start; gap: 15px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">💫</div>
+                <div>
+                  <div style="font-weight: bold; color: var(--muted); margin-bottom: 5px;">Pertemuan Pertama</div>
+                  <div style="color: rgba(255,255,255,0.7); font-size: 14px;">Di saat itu,kita bertemu dengan tak sengaja dan ternyata menyimpan rasa</div>
+                </div>
+              </div>
+              
+              <!-- Timeline Item 2 -->
+              <div style="display: flex; align-items: flex-start; gap: 15px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                <div style="background: linear-gradient(135deg, #f093fb, #f5576c); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">❤️</div>
+                <div>
+                  <div style="font-weight: bold; color: var(--muted); margin-bottom: 5px;">Resmi Jadian</div>
+                  <div style="color: rgba(255,255,255,0.7); font-size: 14px;">02 Februari 2025 - Hari dimana kita resmi menyatukan hati...</div>
+                </div>
+              </div>
+              
+              <!-- Timeline Item 3 -->
+              <div style="display: flex; align-items: flex-start; gap: 15px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🎉</div>
+                <div>
+                  <div style="font-weight: bold; color: var(--muted); margin-bottom: 5px;">Ulang Tahun Pertama</div>
+                  <div style="color: rgba(255,255,255,0.7); font-size: 14px;">Aku dengar aku pertama kali yang ada di ulang tahun mu</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAMBAHAN: Bingkai Foto Keempat di Bawah Timeline -->
+        <div class="photo-section-container">
+          <div class="photo-section-title">Kenangan Spesial</div>
+          
+          <div class="photo-frames">
+            <div class="photo-frame locked" id="photo4">
+              <div class="frame-content">
+                <img src="https://raw.githubusercontent.com/danang2501/k/refs/heads/main/IMG-20250509-WA0025.jpg" 
+                     style="width:100%;height:100%;object-fit:cover" 
+                     alt="Foto Nonikku 4"
+                     onerror="fallbackPhoto(4)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quotes Cinta -->
+        <div class="quotes-section">
+          <div class="photo-section-title" style="font-size: 32px; margin-bottom: 15px;">Untuk Nonikku</div>
+          
+          <div style="background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+            <div style="font-family: 'Great Vibes', cursive; font-size: 22px; color: var(--muted); margin-bottom: 10px; line-height: 1.4;">
+              "Di antara miliar bintang di langit,<br>
+              kau adalah yang paling terang<br>
+              menyinari setiap langkahku..."
+            </div>
+            <div style="color: rgba(255,255,255,0.6); font-size: 14px; font-style: italic;">
+              - Untuk Melody, dari seseorang yang selalu mencintaimu -
+            </div>
+          </div>
+        </div>
+
+        <!-- Puisi Bahasa Sansekerta - DIKUNCI -->
+        <div class="locked-section" id="navaswapna-section">
+          <div class="photo-section-title" style="font-size: 32px; margin-bottom: 15px;">Nava Swapna</div>
+          <div class="sanskrit-poem-box locked-content">
+            <div style="line-height:1.8; text-align: center;">
+              <p style="font-weight: bold; font-size: 18px; margin-bottom: 15px; color: #5d4037;">PREMA SAMPĀ </p>
+              
+              <p><strong>Priye</strong> 
+              <strong>Sapta dasha varshani</strong> ini
+              <strong>aneka rahasya</strong> menantimu...
+              <strong>Bhavishyati</strong>
+               <strong>Atma-svarupam</strong> yang sejati
+              <strong>Jivan-abhyasa</strong> yang akan mengukuhkan hatimu
+              <strong>Nava swapna</strong> akan mulai bersemi</p>
+              
+              <div style="margin-top: 15px; font-style: italic; color: #8d6e63;">
+                "Di usia 17, hidup adalah kanvas kosong yang siap kau lukis dengan warna-warna indah mimpimu"
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Puisi Bahasa Jawa - DIKUNCI -->
+        <div class="locked-section" id="tresnoku-section">
+          <div class="photo-section-title" style="font-size: 32px; margin-bottom: 15px;">Tresno ku</div>
+          <div class="jawa-poem-box locked-content">
+            <div style="line-height:1.8; text-align: center;">
+              <p><strong>KANGGO MELODY</strong></p>
+              
+              <p>Rina wengi aku ngenes<br>
+              Mikir kowe sing ayu banget<br>
+              Atiku rasane kebak<br>
+              Tresnamu tak sandhang ambekan</p>
+              
+              <p>Saben wayah aku eling<br>
+              Koyo lintang ing langit biru<br>
+              Sregep atine aku nandang<br>
+              Ngenteni wektu ketemu maneh</p>
+              
+              <p>Ojo lali yen aku tresno<br>
+              Sak lawase bakal setyo<br>
+              Melodyku sing ayu banget<br>
+              Atiku kanggo sliramu tok</p>
+              
+              <p>Tangise ati yen pisah<br>
+              Nanging yakin bakal ketemu<br>
+              Ing wektu kang sampun janji<br>
+              Badhe awet salawas-lawase</p>
+              
+              <div style="margin-top: 15px; font-style: italic; color: #8d6e63;">
+                "Tresno iku ora mung rasan, nanging pengorbanan kang tanpa pamrih"
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          <div style="font-weight:700;margin-bottom:6px">Petunjuk</div>
+          <div>Tekan ikon <strong>⚙️ Pengaturan</strong> (kanan atas) untuk membuka panel sayang.di sana ada tombol musik (terkunci) dan tombol Game TTS (akan pindah ke halaman TTS).</div>
+        </div>
+        
+        <!-- Tombol lanjut ke permainan -->
+        <div style="text-align:center;margin-top:15px;">
+          <button id="startGames" class="next-btn blink">🎮 Ayo sayang lanjutkan</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 3: TTS -->
+  <section id="page3" class="page" aria-hidden="true">
+    <div class="tts-title">TTS - Teringat Tentangmu Sayang</div>
+    <div class="center-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div>
+          <div style="color:var(--muted)">Dijawab ya nonikku🌹</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="closePage3" class="raised" title="Tutup">Tutup</button>
+        </div>
+      </div>
+
+      <!-- Layout TTS yang lebih presisi ke kiri -->
+      <div style="display:flex;gap:15px;flex-wrap:wrap;align-items:flex-start;justify-content:flex-start">
+        <div class="cross-container">
+          <div id="cross" class="cross"></div>
+        </div>
+
+        <div style="max-width:360px; margin-left: 20px;">
+          <div style="font-weight:700;margin-bottom:8px;color:#2b2b2b">Petunjuk</div>
+          <div style="margin-bottom:8px"><div style="font-weight:600;margin-bottom:6px">Mendatar</div><div id="acrossList" class="clues"></div></div>
+          <div style="margin-bottom:12px"><div style="font-weight:600;margin-bottom:6px">Menurun</div><div id="downList" class="clues"></div></div>
+
+          <div style="display:flex;gap:8px">
+            <button id="check" class="btn">Periksa Jawaban</button>
+            <button id="hint" class="btn">Petunjuk</button>
+            <button id="reset" class="btn">Reset</button>
+          </div>
+
+          <div id="msg" style="margin-top:12px;color:var(--muted)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 4: Games -->
+  <section id="page4" class="page" aria-hidden="true">
+    <div class="center-card">
+      <div style="text-align:center;margin-bottom:15px;">
+        <h2 style="color:var(--muted);margin-bottom:8px;">Permainan Rahasia</h2>
+        <p style="color:var(--muted);">Selesaikan semua permainan ya sayanb nanti kamu mendapatkan kejutan spesial! 🌹</p>
+      </div>
+      
+      <!-- Game 1: Shooter Game -->
+      <div id="game1" class="game-page active">
+        <h3 style="text-align:center;color:var(--muted);">Game 1: Langkah awal</h3>
+        <p style="text-align:center;color:var(--muted);margin-bottom:15px;">Tembak 30 energi negatif ya syaang untuk mencapai penyembuhan!</p>
+        
+        <div class="game-container" id="gameContainer1">
+          <div class="game-ui">
+            <div class="health" id="health1">
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+            </div>
+            <div id="score1">Sembuh: 0/30</div>
+          </div>
+          <div id="player1" class="airplane">
+            <div class="airplane-body"></div>
+            <div class="airplane-wing"></div>
+            <div class="airplane-cockpit"></div>
+            <div class="airplane-tail"></div>
+            <div class="engine-fire left"></div>
+            <div class="engine-fire right"></div>
+          </div>
+        </div>
+        
+        <!-- Kontrol mobile -->
+        <div class="game-controls">
+          <div class="control-btn" id="leftBtn1">←</div>
+          <div class="control-btn" id="fireBtn1">🔥</div>
+          <div class="control-btn" id="rightBtn1">→</div>
+        </div>
+        
+        <div style="text-align:center;margin-top:12px;color:var(--muted);">
+          <p id="controlHint1">Gunakan tombol A dan D untuk bergerak (PC) atau tombol di atas (Mobile)</p>
+        </div>
+        
+        <button id="nextGame1" class="next-btn" style="display:none;">Lanjut ke Game 2</button>
+      </div>
+      
+      <!-- Game 2: Depression Helper -->
+      <div id="game2" class="game-page">
+        <h3 style="text-align:center;color:var(--muted);">Game 2: Diriku</h3>
+        <p style="text-align:center;color:var(--muted);margin-bottom:15px;">Di usia 17 tahun, hidup penuh dengan pertanyaan dan pencarian jati diri...</p>
+        
+        <div class="depression-game">
+          <div class="thought-bubble" id="thoughtBubble">
+            "Aku merasa begitu hampa dan sendirian di usia 17 ini. Sepertinya semua orang sudah tahu apa yang mereka inginkan, sementara aku masih kebingungan..."
+          </div>
+          
+          <div>
+            <button class="positive-option" data-response="1">Aku kuat karena ada kamu yang selalu mendukungku</button>
+            <button class="positive-option" data-response="2">Aku akan melewati ini semua, karena aku tahu kamu ada di sampingku</button>
+            <button class="positive-option" data-response="3">Terima kasih sudah mengingatkanku bahwa aku tidak sendirian</button>
+          </div>
+          
+          <div id="game2Progress" style="margin-top:15px;color:var(--muted);">Langkah: 1/5</div>
+        </div>
+        
+        <button id="nextGame2" class="next-btn" style="display:none;">Lanjut ke Game 3</button>
+      </div>
+      
+      <!-- Game 3: Emotional Journey -->
+      <div id="game3" class="game-page">
+        <h3 style="text-align:center;color:var(--muted);">Game 3: Siapa dia?</h3>
+        <p style="text-align:center;color:var(--muted);margin-bottom:15px;">Sebuah perjalanan yang akan menyentuh hatimu...</p>
+        
+        <div class="emotional-game">
+          <div class="emotional-scene" id="emotionalScene">
+            <div class="undertale-dialog" id="undertaleDialog">
+              <!-- Dialog akan diisi oleh JavaScript -->
+            </div>
+          </div>
+          
+          <!-- Pertanyaan Bahagia -->
+          <div id="happinessQuestion" class="happiness-question" style="display:none;">
+            <h3 style="color:white;margin-bottom:12px;">Apa kamu bahagia sekarang?</h3>
+            <input type="text" id="happinessAnswer" class="happiness-input" placeholder="Jawabanmu...">
+            <br>
+            <button id="submitHappiness" class="positive-option">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 5: Love Letter -->
+  <section id="page5" class="page" aria-hidden="true">
+    <div class="center-card">
+      <div style="text-align:center;margin-bottom:15px;">
+        <h2 style="color:var(--muted);">Surat Untukmu</h2>
+        <p style="color:var(--muted);">Sebuah pesan dari hati ke hati</p>
+      </div>
+      
+      <div class="love-letter" id="loveLetter">
+        <div class="letter-content" id="letterContent">
+          <!-- Surat akan diisi oleh JavaScript -->
+        </div>
+        <div class="letter-signature" id="letterSignature">
+          <!-- Tanda tangan akan diisi oleh JavaScript -->
+        </div>
+      </div>
+      
+      <div style="text-align:center;margin-top:20px;">
+        <button id="backToHome" class="next-btn">Kembali ke Halaman Utama</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Settings panel -->
+<div id="settingsPanel" class="settings-panel" aria-hidden="true">
+  <h4>Pengaturan</h4>
+  <div style="margin-bottom:8px">
+    <div style="font-size:13px;color:#4b4b4b;margin-bottom:6px">Musik</div>
+    <button id="musicToggle" class="raised" style="width:100%;justify-content:center;opacity:0.6;cursor:not-allowed">🎵 Musik (terkunci)</button>
+    <div class="desc">Musik akan terbuka setelah kamu menyelesaikan Game TTS.</div>
+  </div>
+  <hr style="border:none;border-top:1px solid rgba(0,0,0,0.04);margin:10px 0">
+  <div>
+    <div style="font-size:13px;color:#4b4b4b;margin-bottom:6px">Game Rahasia</div>
+    <button id="openTTS" class="btn" style="width:100%;">🌙 Buka Game TTS</button>
+    <div class="desc">Klik ini untuk pindah ke halaman TTS.</div>
+  </div>
+</div>
+
+<!-- Center notify -->
+<div id="centerNotify" class="center-notify" role="alert" aria-live="assertive">
+  <div id="centerClose" class="close-x" title="Tutup">X</div>
+  <div class="icon" id="centerIcon">🔔</div>
+  <div class="title" id="centerTitle">Judul</div>
+  <div class="sub" id="centerSub"></div>
+</div>
+
+<!-- Modal back -->
+<div id="modalBack" class="modal-back"><div id="modalBackBtn" class="raised">← Kembali</div></div>
+
+<!-- Tiny notify -->
+<div id="notifyTiny" style="display:none"></div>
+
+<!-- Audio -->
+<audio id="bgm" preload="auto">
+  <source src="https://raw.githubusercontent.com/danang2501/s/main/v4.www-y2mate.blog%20-%20Liebesleid%20(Love%20s%20Sorrow)%20-%20Kreisler%20(arr.%20Rachmaninoff)%20(256%20KBps)%20(1).mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ========== STATE GLOBAL ========== */
+let state = {
+  ttsCompleted: false,
+  game1Completed: false,
+  game2Completed: false,
+  game3Completed: false,
+  currentPage: 1,
+  isLoggedIn: false
+};
+
+/* ---------------- Helpers ---------------- */
+function tiny(msg, t=2200){
+  const el = document.getElementById('notifyTiny');
+  el.textContent = msg; el.style.display='block'; el.style.opacity=1;
+  clearTimeout(el._t); el._t = setTimeout(()=>{ el.style.opacity=0; setTimeout(()=> el.style.display='none',300); }, t);
+}
+
+function showCenter(mode, title, sub='', duration=4200){
+  const box = document.getElementById('centerNotify');
+  const overlay = document.getElementById('blurOverlay');
+  
+  // Tampilkan blur overlay
+  overlay.style.display = 'block';
+  
+  box.classList.remove('show','hide','dark');
+  if(mode==='dark') box.classList.add('dark');
+  document.getElementById('centerIcon').textContent = (mode==='light' ? '✔︎' : '✖');
+  document.getElementById('centerTitle').textContent = title;
+  document.getElementById('centerSub').textContent = sub;
+  box.style.display='block'; box.classList.add('show');
+  clearTimeout(box._t);
+  box._t = setTimeout(()=>{ 
+    box.classList.remove('show'); 
+    box.classList.add('hide'); 
+    setTimeout(()=> {
+      box.style.display='none';
+      overlay.style.display = 'none';
+    }, 520); 
+  }, duration);
+}
+
+document.getElementById('centerClose').addEventListener('click', ()=>{ 
+  const b=document.getElementById('centerNotify'); 
+  const overlay = document.getElementById('blurOverlay');
+  b.classList.remove('show'); 
+  b.classList.add('hide'); 
+  setTimeout(()=> {
+    b.style.display='none';
+    overlay.style.display = 'none';
+  }, 420); 
+});
+
+/* Generate stars */
+(function genStars(){
+  const layer = document.getElementById('starsLayer'); const n=72;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div'); s.className='star';
+    s.style.left=(Math.random()*100)+'%'; s.style.top=(Math.random()*100)+'%';
+    const size=(1+Math.random()*2); s.style.width=size+'px'; s.style.height=size+'px';
+    s.style.background='rgba(255,255,255,'+(0.6+Math.random()*0.35)+')';
+    s.style.animationDuration=(3 + Math.random()*5)+'s'; s.style.animationDelay=(Math.random()*5)+'s';
+    layer.appendChild(s);
+  }
+})();
+
+/* Generate twinkling stars tambahan */
+(function genTwinklingStars(){
+  const layer = document.getElementById('twinklingStars'); const n=50;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div'); s.className='twinkling-star';
+    s.style.left=(Math.random()*100)+'%'; s.style.top=(Math.random()*100)+'%';
+    s.style.animationDelay=(Math.random()*5)+'s';
+    s.style.animationDuration=(2 + Math.random()*4)+'s';
+    layer.appendChild(s);
+  }
+})();
+
+/* Fungsi untuk membuat komet */
+function createComets() {
+  const container = document.getElementById('cometsContainer');
+  if (!container) return;
+
+  // Hapus komet lama
+  container.innerHTML = '';
+
+  // Buat 3-5 komet dengan karakteristik berbeda
+  const cometCount = 3 + Math.floor(Math.random() * 3);
+  
+  for (let i = 0; i < cometCount; i++) {
+    setTimeout(() => {
+      createSingleComet(container);
+    }, i * 8000); // Komet muncul secara bergantian
+  }
+
+  // Buat komet baru secara periodik
+  setInterval(() => {
+    createSingleComet(container);
+  }, 15000);
+}
+
+function createSingleComet(container) {
+  const comet = document.createElement('div');
+  comet.className = 'comet';
+  
+  // Posisi awal acak
+  const startX = -50;
+  const startY = Math.random() * 50;
+  
+  // Durasi dan delay acak
+  const duration = 5000 + Math.random() * 7000;
+  const delay = Math.random() * 5000;
+  
+  // Atur posisi dan animasi
+  comet.style.left = `${startX}px`;
+  comet.style.top = `${startY}vh`;
+  comet.style.animation = `cometFly ${duration}ms ease-in-out ${delay}ms forwards`;
+  
+  // Buat tail
+  const tail = document.createElement('div');
+  tail.className = 'comet-tail';
+  tail.style.animation = `cometTail ${duration}ms ease-in-out ${delay}ms forwards`;
+  comet.appendChild(tail);
+  
+  // Buat glow effect
+  const glow = document.createElement('div');
+  glow.className = 'comet-glow';
+  comet.appendChild(glow);
+  
+  // Variasi ukuran dan warna
+  const size = 2 + Math.random() * 3;
+  comet.style.width = `${size}px`;
+  comet.style.height = `${size}px`;
+  
+  // Variasi warna (biru, putih, sedikit ungu)
+  const colorVariation = Math.random();
+  if (colorVariation < 0.3) {
+    comet.style.background = 'linear-gradient(45deg, #ffffff, #e1f5fe, #4fc3f7)';
+  } else if (colorVariation < 0.6) {
+    comet.style.background = 'linear-gradient(45deg, #ffffff, #f3e5f5, #ba68c8)';
+  } else {
+    comet.style.background = 'linear-gradient(45deg, #ffffff, #e8eaf6, #7986cb)';
+  }
+  
+  container.appendChild(comet);
+  
+  // Hapus komet setelah selesai animasi
+  setTimeout(() => {
+    if (comet.parentNode) {
+      comet.parentNode.removeChild(comet);
+    }
+  }, duration + delay + 1000);
+}
+
+/* Slider auto */
+(function sliderLoop(){
+  const track = document.getElementById('track'); if(!track) return;
+  let idx=0; setInterval(()=>{ idx=(idx+1)%4; track.style.transform='translateX(-'+(idx*100)+'%)'; },3200);
+})();
+
+/* PAGE controls */
+const page1 = document.getElementById('page1'), page2 = document.getElementById('page2'), page3 = document.getElementById('page3'), page4 = document.getElementById('page4'), page5 = document.getElementById('page5');
+function showPage(n){
+  [page1,page2,page3,page4,page5].forEach(p=>p.classList.remove('show'));
+  if(n===1){ 
+    page1.classList.add('show'); 
+    document.title='Nonikku — Masuk'; 
+    document.getElementById('backRaised').style.display = 'none';
+  }
+  if(n===2){ 
+    page2.classList.add('show'); 
+    document.title='Nonikku — Hub'; 
+    document.getElementById('backRaised').style.display = 'inline-flex';
+    // Inisialisasi game memory saat halaman 2 ditampilkan
+    setTimeout(initMemoryGame, 100);
+    // Buat komet baru saat masuk ke halaman utama
+    setTimeout(createComets, 1000);
+  }
+  if(n===3){ 
+    page3.classList.add('show'); 
+    document.title='Nonikku — TTS'; 
+    renderCross(); 
+    document.getElementById('backRaised').style.display = 'inline-flex';
+  }
+  if(n===4){ 
+    page4.classList.add('show'); 
+    document.title='Nonikku — Permainan'; 
+    initGames(); 
+    document.getElementById('backRaised').style.display = 'inline-flex';
+  }
+  if(n===5){ 
+    page5.classList.add('show'); 
+    document.title='Nonikku — Surat Cinta'; 
+    showLoveLetter(); 
+    document.getElementById('backRaised').style.display = 'inline-flex';
+  }
+  
+  state.currentPage = n;
+  
+  // Hentikan game jika tidak di halaman game
+  if (n !== 4) {
+    stopGame1();
+  }
+}
+
+/* Back behavior */
+document.getElementById('backRaised').addEventListener('click', ()=>{
+  if(page5.classList.contains('show')){ showPage(4); }
+  else if(page4.classList.contains('show')){ showPage(2); document.getElementById('modalBack').classList.remove('show'); tiny('Kembali ke Hub'); }
+  else if(page3.classList.contains('show')){ 
+    if(state.isLoggedIn){ 
+      showPage(2); 
+    } else { 
+      showPage(1); 
+    }
+    document.getElementById('modalBack').classList.remove('show'); 
+    tiny('Kembali ke halaman sebelumnya'); 
+  }
+  else if(page2.classList.contains('show')){ showPage(1); tiny('Kembali ke halaman awal'); }
+  else window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* Tombol mulai permainan */
+document.getElementById('startGames').addEventListener('click', ()=> {
+  showPage(4);
+  tiny('Selamat bermain! Selesaikan semua permainan untuk kejutan spesial 🌹');
+});
+
+/* PAGE1: password logic */
+const pwInput = document.getElementById('pwInput'), pwBtn = document.getElementById('pwBtn'), pwMsg = document.getElementById('pwMsg');
+pwBtn.addEventListener('click', ()=> {
+  const v = (pwInput.value||'').trim();
+  if(v === '020225'){ 
+    state.isLoggedIn = true;
+    showPage(2); 
+    tiny('Selamat datang sayang jangan lupa tekan ⚙️ '); 
+  }
+  else { 
+    pwMsg.textContent=''; 
+    showCenter('dark','Password salah sayang, coba lagi','Klik X untuk menutup'); 
+  }
+});
+document.getElementById('pwHint').addEventListener('click', ()=> tiny('Petunjuk:Hayo apa? Tanggal kita jadian sayangg..'));
+pwInput.addEventListener('keypress',(e)=>{ if(e.key==='Enter') pwBtn.click(); });
+
+/* Settings panel */
+const settingsBtn = document.getElementById('settingsBtn'), settingsPanel = document.getElementById('settingsPanel');
+settingsBtn.addEventListener('click', ()=> { 
+  settingsPanel.classList.toggle('show'); 
+});
+
+/* Music lock/unlock */
+const musicToggle = document.getElementById('musicToggle'), bgm = document.getElementById('bgm');
+let musicUnlocked = false, musicPlaying = false;
+
+musicUnlocked = false;
+musicPlaying = false;
+musicToggle.style.opacity = '0.6';
+musicToggle.style.cursor = 'not-allowed';
+musicToggle.textContent = '🎵 Musik (terkunci)';
+
+function unlockMusic(){ 
+  musicUnlocked = true; 
+  musicToggle.style.opacity = '1'; 
+  musicToggle.style.cursor = 'pointer'; 
+  musicToggle.textContent = '🎵 Musik (siap)'; 
+}
+
+musicToggle.addEventListener('click', ()=>{
+  if(!musicUnlocked){ 
+    tiny('Musik terkunci — selesaikan Game TTS dulu.'); 
+    return; 
+  }
+  if(!musicPlaying){ 
+    const p = bgm.play(); 
+    if(p && p.catch) p.catch(()=> tiny('Browser mencegah putar otomatis — tekan lagi.')); 
+    musicPlaying = true; 
+    musicToggle.textContent = '🔊 Musik (ON)'; 
+  }
+  else { 
+    bgm.pause(); 
+    musicPlaying = false; 
+    musicToggle.textContent = '🎵 Musik (siap)'; 
+  }
+});
+
+/* Open TTS page */
+document.getElementById('openTTS').addEventListener('click', ()=>{
+  settingsPanel.classList.remove('show'); 
+  showPage(3); 
+  document.getElementById('modalBack').classList.add('show'); 
+  tiny('TTS terbuka — selesaikan teka-teki');
+});
+
+document.getElementById('closePage3').addEventListener('click', ()=> { 
+  if(state.isLoggedIn) {
+    showPage(2); 
+  } else {
+    showPage(1); 
+  }
+  document.getElementById('modalBack').classList.remove('show'); 
+  tiny('Kembali ke halaman sebelumnya'); 
+});
+
+document.getElementById('modalBackBtn').addEventListener('click', ()=> { 
+  if(state.isLoggedIn) {
+    showPage(2); 
+  } else {
+    showPage(1); 
+  }
+  document.getElementById('modalBack').classList.remove('show'); 
+});
+
+/* ---------------- Crossword data & render ---------------- */
+const PLACED = [
+  { id:'1', word:'NONIK', r:1, c:1, dir:'across', clue:'1. Apa nama panggilan favoritmu?' },
+  { id:'2', word:'KAMERA', r:1, c:5, dir:'down', clue:'2. Kamu suka ...... saat dulu di sekolah ya sayang' },
+  { id:'3', word:'MATCHA', r:2, c:4, dir:'across', clue:'3. Minuman kesukaanku' }
+];
+
+function makeGrid(){
+  const grid = Array.from({length:10}, ()=> Array(10).fill(null));
+  for(const p of PLACED){
+    const w = p.word.toUpperCase();
+    if(p.dir==='across'){
+      for(let i=0;i<w.length;i++){
+        const r=p.r, c=p.c+i;
+        if (r < 10 && c < 10) {
+          grid[r][c] = grid[r][c] || {letter:w[i], starts:[]};
+          if(i===0) grid[r][c].starts.push(p.id);
+        }
+      }
+    } else {
+      for(let i=0;i<w.length;i++){
+        const r=p.r+i, c=p.c;
+        if (r < 10 && c < 10) {
+          grid[r][c] = grid[r][c] || {letter:w[i], starts:[]};
+          if(i===0) grid[r][c].starts.push(p.id);
+        }
+      }
+    }
+  }
+  window._grid = grid; window._placed = JSON.parse(JSON.stringify(PLACED));
+}
+
+function renderCross(){
+  const board = document.getElementById('cross');
+  if(!board) return;
+  makeGrid();
+  board.innerHTML='';
+  const g = window._grid;
+  for(let r=0;r<10;r++){
+    for(let c=0;c<10;c++){
+      if(g[r][c]){
+        const wrap = document.createElement('div'); wrap.className='cell'; wrap.dataset.r=r; wrap.dataset.c=c;
+        if(g[r][c].starts && g[r][c].starts.length){
+          const n = document.createElement('div'); n.className='num'; n.textContent = g[r][c].starts[0]; wrap.appendChild(n);
+        }
+        const inp = document.createElement('input');
+        inp.maxLength=1; inp.spellcheck=false; inp.autocapitalize='off'; inp.autocomplete='off';
+        inp.dataset.r = r; inp.dataset.c = c;
+        inp.addEventListener('input', e=>{
+          e.target.value = (e.target.value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+          moveFocusAfterInput(parseInt(e.target.dataset.r), parseInt(e.target.dataset.c));
+        });
+        inp.addEventListener('keydown', handleKeyNav);
+        wrap.appendChild(inp);
+        board.appendChild(wrap);
+      } else {
+        const gap = document.createElement('div'); gap.className='gap'; board.appendChild(gap);
+      }
+    }
+  }
+  renderClues();
+}
+
+function renderClues(){
+  const across = document.getElementById('acrossList'), down = document.getElementById('downList');
+  if(!across || !down) return;
+  across.innerHTML=''; down.innerHTML='';
+  for(const p of window._placed){
+    const el = document.createElement('div'); el.className='clue'; el.id='clue-'+p.id; el.tabIndex=0;
+    el.innerHTML = `<strong>${p.id}.</strong> ${p.clue} <span style="float:right;opacity:0.7">${p.word.length}</span>`;
+    el.addEventListener('click', ()=> focusWord(p.id));
+    el.addEventListener('keypress', (e)=>{ if(e.key==='Enter') focusWord(p.id); });
+    if(p.dir==='across') across.appendChild(el); else down.appendChild(el);
+  }
+}
+
+/* Helpers for focus/navigation */
+function focusWord(id){ const p = window._placed.find(x=>x.id===id); if(!p) return; const el = document.querySelector(`input[data-r='${p.r}'][data-c='${p.c}']`); if(el){ el.focus(); el.select(); } }
+function moveFocusAfterInput(r,c){
+  for(const p of window._placed){
+    if(p.dir==='across'){
+      if(r===p.r && c>=p.c && c < p.c + p.word.length){
+        const nextC = c+1; if(nextC < p.c + p.word.length){ const el = document.querySelector(`input[data-r='${r}'][data-c='${nextC}']`); if(el) el.focus(); } return;
+      }
+    } else {
+      if(c===p.c && r>=p.r && r < p.r + p.word.length){
+        const nextR = r+1; if(nextR < p.r + p.word.length){ const el = document.querySelector(`input[data-r='${nextR}'][data-c='${c}']`); if(el) el.focus(); } return;
+      }
+    }
+  }
+}
+
+/* Keyboard nav */
+function handleKeyNav(e){
+  const key = e.key; const r = parseInt(e.target.dataset.r), c = parseInt(e.target.dataset.c);
+  if(key==='ArrowLeft'){ e.preventDefault(); moveTo(r,c-1); }
+  else if(key==='ArrowRight'){ e.preventDefault(); moveTo(r,c+1); }
+  else if(key==='ArrowUp'){ e.preventDefault(); moveTo(r-1,c); }
+  else if(key==='ArrowDown'){ e.preventDefault(); moveTo(r+1,c); }
+  else if(key==='Backspace'){ if(!e.target.value) moveTo(r, c-1); }
+}
+function moveTo(r,c){ if(r<0||c<0||r>9||c>9) return; const el=document.querySelector(`input[data-r='${r}'][data-c='${c}']`); if(el){ el.focus(); el.select(); } }
+
+function iterateCellsForWord(p, fn){
+  if(p.dir==='across'){ for(let i=0;i<p.word.length;i++){ const cell=document.querySelector(`.cell[data-r='${p.r}'][data-c='${p.c+i}']`); if(cell) fn(cell); } }
+  else { for(let i=0;i<p.word.length;i++){ const cell=document.querySelector(`.cell[data-r='${p.r+i}'][data-c='${p.c}']`); if(cell) fn(cell); } }
+}
+function markWordCorrect(p){ const el=document.getElementById('clue-'+p.id); if(el) el.classList.add('correct'); iterateCellsForWord(p, c=>{ c.classList.add('correct'); c.style.background='linear-gradient(90deg,#e6fff0,#dfffe8)'; }); }
+function markWordWrong(p){ const el=document.getElementById('clue-'+p.id); if(el) el.classList.add('wrong'); iterateCellsForWord(p, c=>{ c.classList.add('wrong'); c.style.background='linear-gradient(90deg,#ffecec,#ffdede)'; }); }
+
+/* PERUBAHAN BARU: Fungsi untuk mengunci bagian-bagian tertentu */
+function lockSensitiveContent() {
+  // Kunci bagian Nava Swapna dan Tresno Ku
+  document.querySelectorAll('#navaswapna-section, #tresnoku-section').forEach(section => {
+    section.classList.add('locked-section');
+    const content = section.querySelector('.sanskrit-poem-box, .jawa-poem-box');
+    if (content) {
+      content.classList.add('locked-content');
+    }
+  });
+}
+
+/* PERUBAHAN BARU: Fungsi untuk membuka kunci setelah TTS selesai */
+function unlockSensitiveContent() {
+  document.querySelectorAll('#navaswapna-section, #tresnoku-section').forEach(section => {
+    section.classList.remove('locked-section');
+    const content = section.querySelector('.sanskrit-poem-box, .jawa-poem-box');
+    if (content) {
+      content.classList.remove('locked-content');
+    }
+  });
+}
+
+/* Check logic */
+document.getElementById('check').addEventListener('click', ()=>{
+  let allCorrect=true;
+  window._placed.forEach(p=>{ 
+    const el=document.getElementById('clue-'+p.id); 
+    if(el){ el.classList.remove('correct','wrong'); } 
+    iterateCellsForWord(p, ce=>{ ce.classList.remove('correct','wrong'); ce.style.background=''; }); 
+  });
+  
+  for(const p of window._placed){
+    let built='';
+    if(p.dir==='across'){ for(let i=0;i<p.word.length;i++){ const el=document.querySelector(`input[data-r='${p.r}'][data-c='${p.c+i}']`); built += el? (el.value||'') : ''; } }
+    else { for(let i=0;i<p.word.length;i++){ const el=document.querySelector(`input[data-r='${p.r+i}'][data-c='${p.c}']`); built += el? (el.value||'') : ''; } }
+    if(built.toUpperCase() === p.word.toUpperCase()){ markWordCorrect(p); } else { markWordWrong(p); allCorrect=false; }
+  }
+  
+  if(allCorrect){
+    localStorage.setItem('ttsSolved','1');
+    showCenter('light','Okey sayang benar','Musik akan terbuka pada panel pengaturan.');
+    unlockMusic();
+    
+    // PERUBAHAN BARU: Buka kunci konten sensitif
+    unlockSensitiveContent();
+    state.ttsCompleted = true;
+    
+    tiny('Selamat! Konten spesial sekarang terbuka untukmu 💖');
+  } else {
+    showCenter('dark','Jawaban salah sayang, coba lagi','Periksa huruf yang berwarna merah.');
+  }
+});
+
+/* Hint & reset */
+document.getElementById('hint').addEventListener('click', ()=> tiny('Petunjuk: NONIK, KAMERA, MATCHA'));
+document.getElementById('reset').addEventListener('click', ()=>{
+  document.querySelectorAll('#cross input').forEach(i=>i.value='');
+  document.querySelectorAll('.clue').forEach(c=>c.classList.remove('correct','wrong'));
+  document.querySelectorAll('.cell').forEach(cell=>{ cell.classList.remove('correct','wrong'); cell.style.background=''; });
+  document.getElementById('msg').textContent='';
+  localStorage.removeItem('ttsSolved');
+  tiny('Grid direset.');
+});
+
+/* ---------------- GAME LOGIC ---------------- */
+// Variabel global untuk game 1
+let game1State = {
+  score: 0,
+  health: 3,
+  bullets: [],
+  enemies: [],
+  gameInterval: null,
+  enemyInterval: null,
+  gameActive: false,
+  canShoot: true,
+  playerX: 50
+};
+
+// Fungsi untuk menghentikan game1
+function stopGame1() {
+  if (game1State.gameInterval) clearInterval(game1State.gameInterval);
+  if (game1State.enemyInterval) clearInterval(game1State.enemyInterval);
+  game1State.gameActive = false;
+}
+
+function initGames() {
+  initShooterGame();
+  initDepressionGame();
+}
+
+/* PERUBAHAN BARU: Game Memory untuk halaman 2 */
+function initMemoryGame() {
+  const board = document.getElementById('memoryGame');
+  const resetButton = document.getElementById('resetMemoryGame');
+  if (!board) return;
+
+  const emojis = ['❤️', '🎉', '🎂', '🎁', '🌸', '🌹', '💌', '💖'];
+  const cards = [...emojis, ...emojis]; // Duplikat untuk pasangan
+  let flippedCards = [];
+  let matchedCards = [];
+
+  // Acak urutan kartu
+  cards.sort(() => Math.random() - 0.5);
+
+  // Bersihkan board
+  board.innerHTML = '';
+
+  // Buat kartu
+  cards.forEach((emoji, index) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.dataset.index = index;
+    card.innerHTML = `
+      <div class="front">?</div>
+      <div class="back">${emoji}</div>
+    `;
+    card.addEventListener('click', () => flipCard(card, emoji));
+    board.appendChild(card);
+  });
+
+  function flipCard(card, emoji) {
+    // Jika kartu sudah terbalik atau sudah cocok, abaikan
+    if (card.classList.contains('flipped') || matchedCards.includes(card)) {
+      return;
+    }
+
+    // Balik kartu
+    card.classList.add('flipped');
+    flippedCards.push({ card, emoji });
+
+    // Jika dua kartu terbuka, periksa kecocokan
+    if (flippedCards.length === 2) {
+      const [card1, card2] = flippedCards;
+      if (card1.emoji === card2.emoji) {
+        // Cocok
+        matchedCards.push(card1.card, card2.card);
+        flippedCards = [];
+
+        // Periksa apakah semua kartu sudah cocok
+        if (matchedCards.length === cards.length) {
+          setTimeout(() => {
+            tiny('Selamat! Kamu berhasil menemukan semua pasangan! 🎉');
+          }, 500);
+        }
+      } else {
+        // Tidak cocok, balik kembali setelah jeda
+        setTimeout(() => {
+          card1.card.classList.remove('flipped');
+          card2.card.classList.remove('flipped');
+          flippedCards = [];
+        }, 1000);
+      }
+    }
+  }
+
+  // Reset game
+  resetButton.onclick = initMemoryGame;
+}
+
+/* Game 1: Shooter Game */
+function initShooterGame() {
+  const gameContainer = document.getElementById('gameContainer1');
+  const player = document.getElementById('player1');
+  const scoreDisplay = document.getElementById('score1');
+  const healthDisplay = document.getElementById('health1');
+  const leftBtn = document.getElementById('leftBtn1');
+  const rightBtn = document.getElementById('rightBtn1');
+  const fireBtn = document.getElementById('fireBtn1');
+  
+  // Hentikan game sebelumnya jika masih berjalan
+  stopGame1();
+  
+  // Reset state
+  game1State = {
+    score: 0,
+    health: 3,
+    bullets: [],
+    enemies: [],
+    gameInterval: null,
+    enemyInterval: null,
+    gameActive: true,
+    canShoot: true,
+    playerX: 50
+  };
+  
+  // Reset tampilan
+  scoreDisplay.textContent = `Sembuh: 0/30`;
+  updateHealthDisplay();
+  
+  // Reset player position
+  player.style.left = '50%';
+  
+  // Hapus semua elemen game yang ada
+  const existingBullets = document.querySelectorAll('.bullet');
+  const existingEnemies = document.querySelectorAll('.enemy');
+  const existingExplosions = document.querySelectorAll('.explosion');
+  const existingParticles = document.querySelectorAll('.particle');
+  
+  existingBullets.forEach(b => b.remove());
+  existingEnemies.forEach(e => e.remove());
+  existingExplosions.forEach(e => e.remove());
+  existingParticles.forEach(p => p.remove());
+  
+  // Keyboard controls untuk PC
+  const keys = {};
+  
+  document.addEventListener('keydown', (e) => {
+    keys[e.key.toLowerCase()] = true;
+    
+    if (e.key === ' ') {
+      e.preventDefault();
+      shoot();
+    }
+  });
+  
+  document.addEventListener('keyup', (e) => {
+    keys[e.key.toLowerCase()] = false;
+  });
+  
+  // Kontrol touch untuk mobile
+  let isMovingLeft = false;
+  let isMovingRight = false;
+  
+  leftBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isMovingLeft = true;
+  });
+  
+  leftBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isMovingLeft = false;
+  });
+  
+  rightBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isMovingRight = true;
+  });
+  
+  rightBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isMovingRight = false;
+  });
+  
+  fireBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    shoot();
+  });
+  
+  // Kontrol mouse untuk desktop
+  leftBtn.addEventListener('mousedown', () => {
+    isMovingLeft = true;
+  });
+  
+  leftBtn.addEventListener('mouseup', () => {
+    isMovingLeft = false;
+  });
+  
+  leftBtn.addEventListener('mouseleave', () => {
+    isMovingLeft = false;
+  });
+  
+  rightBtn.addEventListener('mousedown', () => {
+    isMovingRight = true;
+  });
+  
+  rightBtn.addEventListener('mouseup', () => {
+    isMovingRight = false;
+  });
+  
+  rightBtn.addEventListener('mouseleave', () => {
+    isMovingRight = false;
+  });
+  
+  fireBtn.addEventListener('mousedown', () => {
+    shoot();
+  });
+  
+  function shoot() {
+    if (!game1State.gameActive || !game1State.canShoot) return;
+    
+    game1State.canShoot = false;
+    setTimeout(() => { game1State.canShoot = true; }, 300);
+
+    const bullet = document.createElement('div');
+    bullet.className = 'bullet fire';
+    
+    bullet.style.left = game1State.playerX + '%';
+    bullet.style.bottom = '50px';
+    gameContainer.appendChild(bullet);
+    
+    game1State.bullets.push({
+      element: bullet,
+      x: game1State.playerX,
+      y: 50,
+      speed: 6
+    });
+    
+    setTimeout(() => {
+      bullet.classList.remove('fire');
+    }, 300);
+  }
+  
+  function createEnemy() {
+    if (!game1State.gameActive || game1State.enemies.length >= 5) return;
+    
+    const enemyWords = ['Bimbang', 'Keterpurukan', 'Gagal', 'Menangis', 'Sedih', 'Marah', 'Sombong', 'Iri', 'Masa Lalu'];
+    const enemyWord = enemyWords[Math.floor(Math.random() * enemyWords.length)];
+    const enemy = document.createElement('div');
+    enemy.className = 'enemy';
+    enemy.textContent = enemyWord;
+    enemy.style.left = Math.random() * 80 + 10 + '%';
+    enemy.style.top = '0px';
+    gameContainer.appendChild(enemy);
+    
+    game1State.enemies.push({
+      element: enemy,
+      x: parseFloat(enemy.style.left),
+      y: 0,
+      speed: 1 + Math.random() * 2,
+      word: enemyWord
+    });
+  }
+  
+  function updateGame() {
+    if (!game1State.gameActive) return;
+    
+    // Gerakkan player berdasarkan input
+    if (keys['a'] || isMovingLeft) {
+      game1State.playerX = Math.max(5, game1State.playerX - 5);
+    }
+    if (keys['d'] || isMovingRight) {
+      game1State.playerX = Math.min(95, game1State.playerX + 5);
+    }
+    
+    // Update player position
+    player.style.left = game1State.playerX + '%';
+    
+    // Gerakkan peluru
+    for (let i = game1State.bullets.length - 1; i >= 0; i--) {
+      const bullet = game1State.bullets[i];
+      bullet.y += bullet.speed;
+      bullet.element.style.bottom = bullet.y + 'px';
+      
+      // Hapus peluru jika sudah melewati batas atas
+      if (bullet.y > 350) {
+        bullet.element.remove();
+        game1State.bullets.splice(i, 1);
+      }
+    }
+    
+    // Gerakkan musuh
+    for (let i = game1State.enemies.length - 1; i >= 0; i--) {
+      const enemy = game1State.enemies[i];
+      enemy.y += enemy.speed;
+      enemy.element.style.top = enemy.y + 'px';
+      
+      // Cek tabrakan dengan peluru
+      for (let j = game1State.bullets.length - 1; j >= 0; j--) {
+        const bullet = game1State.bullets[j];
+        
+        // Deteksi tabrakan sederhana
+        const bulletRect = bullet.element.getBoundingClientRect();
+        const enemyRect = enemy.element.getBoundingClientRect();
+        
+        if (bulletRect.left < enemyRect.right &&
+            bulletRect.right > enemyRect.left &&
+            bulletRect.top < enemyRect.bottom &&
+            bulletRect.bottom > enemyRect.top) {
+          
+          // Tabrakan terjadi
+          createExplosion(enemy.x, enemy.y);
+          
+          bullet.element.remove();
+          game1State.bullets.splice(j, 1);
+          
+          enemy.element.remove();
+          game1State.enemies.splice(i, 1);
+          
+          // Tambah skor
+          game1State.score++;
+          scoreDisplay.textContent = `Sembuh: ${game1State.score}/30`;
+          
+          // Cek jika menang
+          if (game1State.score >= 30) {
+            game1State.gameActive = false;
+            clearInterval(game1State.gameInterval);
+            clearInterval(game1State.enemyInterval);
+            showCenter('light', 'Kemenangan!', 'Kamu berhasil mengusir semua energi negatif!');
+            document.getElementById('nextGame1').style.display = 'block';
+            
+            // Buka kunci foto pertama
+            unlockPhoto(1);
+            state.game1Completed = true;
+          }
+          
+          break;
+        }
+      }
+      
+      // Deteksi tabrakan dengan pesawat
+      const playerRect = player.getBoundingClientRect();
+      const enemyRect = enemy.element.getBoundingClientRect();
+      
+      if (enemyRect.left < playerRect.right &&
+          enemyRect.right > playerRect.left &&
+          enemyRect.top < playerRect.bottom &&
+          enemyRect.bottom > playerRect.top) {
+        
+        createExplosion(enemy.x, enemy.y);
+        
+        enemy.element.remove();
+        game1State.enemies.splice(i, 1);
+        
+        // Kurangi kesehatan
+        game1State.health--;
+        updateHealthDisplay();
+        
+        // Cek jika game over
+        if (game1State.health <= 0) {
+          game1State.gameActive = false;
+          clearInterval(game1State.gameInterval);
+          clearInterval(game1State.enemyInterval);
+          if (state.currentPage === 4) {
+            showCenter('dark', 'Game Over', 'Energi negatif mengalahkanmu. Coba lagi!');
+          }
+          setTimeout(() => {
+            initShooterGame();
+          }, 3000);
+        }
+      }
+      
+      // Hapus musuh jika melewati batas bawah tanpa mengurangi kesehatan
+      if (enemy.y > 350) {
+        enemy.element.remove();
+        game1State.enemies.splice(i, 1);
+      }
+    }
+  }
+  
+  function updateHealthDisplay() {
+    const hearts = healthDisplay.querySelectorAll('.heart');
+    for (let i = 0; i < hearts.length; i++) {
+      if (i < game1State.health) {
+        hearts[i].style.opacity = '1';
+      } else {
+        hearts[i].style.opacity = '0.3';
+      }
+    }
+  }
+  
+  function createExplosion(x, y) {
+    const explosion = document.createElement('div');
+    explosion.className = 'explosion';
+    explosion.style.left = x + '%';
+    explosion.style.top = y + 'px';
+    gameContainer.appendChild(explosion);
+    
+    // Buat partikel
+    for (let i = 0; i < 8; i++) {
+      createParticle(x, y);
+    }
+    
+    setTimeout(() => {
+      explosion.remove();
+    }, 600);
+  }
+  
+  function createParticle(x, y) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = x + '%';
+    particle.style.top = y + 'px';
+    
+    // Arah acak untuk partikel
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 20 + Math.random() * 30;
+    const tx = Math.cos(angle) * distance;
+    const ty = Math.sin(angle) * distance;
+    
+    particle.style.setProperty('--tx', tx + 'px');
+    particle.style.setProperty('--ty', ty + 'px');
+    
+    gameContainer.appendChild(particle);
+    
+    setTimeout(() => {
+      particle.remove();
+    }, 1000);
+  }
+  
+  // Mulai game
+  game1State.gameInterval = setInterval(updateGame, 50);
+  game1State.enemyInterval = setInterval(createEnemy, 1000);
+}
+
+/* Game 2: Depression Helper */
+function initDepressionGame() {
+  const thoughtBubble = document.getElementById('thoughtBubble');
+  const progressDisplay = document.getElementById('game2Progress');
+  const options = document.querySelectorAll('.positive-option');
+  
+  let step = 1;
+  const thoughts = [
+    "Aku merasa begitu hampa dan sendirian di usia 17 ini. Sepertinya semua orang sudah tahu apa yang mereka inginkan, sementara aku masih kebingungan...",
+    "Terkadang aku merasa tidak cukup baik. Apa yang salah denganku? Mengapa aku tidak sebahagia orang lain?",
+    "Aku lehir berpura-pura kuat. Terkadang aku ingin menyerah saja...",
+    "Mimpi-mimpiku terasa begitu jauh. Apakah aku pantas untuk bermimpi?",
+    "Tapi... mungkin ada secercah harapan. Mungkin aku lebih kuat dari yang kukira."
+  ];
+  
+  const responses = [
+    "Aku kuat karena ada kamu yang selalu mendukungku",
+    "Aku akan melewati ini semua, karena aku tahu kamu ada di sampingku",
+    "Terima kasih sudah mengingatkanku bahwa aku tidak sendirian",
+    "Bersamamu, aku merasa bisa melakukan apa pun",
+    "Kamu adalah alasan aku tetap bertahan dan terus berjuang"
+  ];
+  
+  thoughtBubble.textContent = thoughts[0];
+  progressDisplay.textContent = `Langkah: 1/5`;
+  
+  options.forEach(option => {
+    option.addEventListener('click', function() {
+      const responseIndex = parseInt(this.dataset.response) - 1;
+      
+      // Tampilkan respons
+      tiny(responses[responseIndex]);
+      
+      // Lanjut ke langkah berikutnya
+      step++;
+      
+      if (step <= 5) {
+        thoughtBubble.textContent = thoughts[step-1];
+        progressDisplay.textContent = `Langkah: ${step}/5`;
+        
+        // Ubah teks opsi untuk langkah terakhir
+        if (step === 5) {
+          options.forEach(opt => {
+            opt.textContent = "Aku siap melanjutkan perjalananku...";
+          });
+        }
+      } else {
+        // Game selesai
+        showCenter('light', 'Pencapaian Hebat!', 'Kamu telah menyelesaikan perjalanan introspkesimu di usia 17 tahun.');
+        
+        // Buka kunci foto kedua
+        unlockPhoto(2);
+        state.game2Completed = true;
+        
+        setTimeout(() => {
+          showCenter('light', 'Kedip HP!', 'Game 3 akan segera dimulai...');
+          blinkScreen();
+          setTimeout(() => {
+            document.getElementById('nextGame2').style.display = 'block';
+          }, 2000);
+        }, 3000);
+      }
+    });
+  });
+}
+
+/* Game 3: Emotional Journey */
+function initEmotionalGame() {
+  const emotionalScene = document.getElementById('emotionalScene');
+  const undertaleDialog = document.getElementById('undertaleDialog');
+  const happinessQuestion = document.getElementById('happinessQuestion');
+  
+  // Konten game 3 - Dialog Undertale style
+  const dialogs = [
+    { speaker: "?", text: "Hai, apa kabar?" },
+    { speaker: "?", text: "Senang bertemu dengan mu di nuansa game.." },
+    { speaker: "Aku", text: "Hah, siapa kamu?" },
+    { speaker: "?", text: "Haahhahaa" },
+    { speaker: "Malikos", text: "Aku malikos" },
+    { speaker: "Malikos", text: "Aku dengar kamu ulangtahun ya?" },
+    { speaker: "Malikos", text: "Soo ya, selamat ulang tahun ya, diumurmu yang dewasa ini aku harap kamu lebih tau makna kehidupan ini" },
+    { speaker: "Malikos", text: "Terimakasih ya kamu telah menjaga Surya sebaik ini, aku pamit -O7" }
+  ];
+  
+  let currentDialog = 0;
+  
+  function showDialog() {
+    if (currentDialog >= dialogs.length) {
+      // Setelah dialog selesai, tampilkan pertanyaan
+      emotionalScene.innerHTML = '';
+      happinessQuestion.style.display = 'block';
+      return;
+    }
+    
+    const dialog = dialogs[currentDialog];
+    undertaleDialog.innerHTML = `
+      <div class="dialog-speaker">${dialog.speaker}</div>
+      <div class="dialog-text" id="dialogText"></div>
+    `;
+    
+    const dialogTextElement = document.getElementById('dialogText');
+    typeTextUndertale(dialogTextElement, dialog.text, () => {
+      currentDialog++;
+      // Setelah selesai mengetik, tunggu 2 detik lalu lanjut ke dialog berikutnya
+      setTimeout(showDialog, 2000);
+    });
+  }
+  
+  function typeTextUndertale(element, text, callback) {
+    element.innerHTML = '';
+    let i = 0;
+    let currentLine = '';
+    
+    const typing = setInterval(() => {
+      if (i < text.length) {
+        const char = text.charAt(i);
+        currentLine += char;
+        element.innerHTML = currentLine + '<span class="blink">|</span>';
+        
+        i++;
+      } else {
+        clearInterval(typing);
+        element.innerHTML = currentLine;
+        if (callback) callback();
+      }
+    }, 80);
+  }
+  
+  // Event listener untuk pertanyaan bahagia
+  document.getElementById('submitHappiness').addEventListener('click', function() {
+    const answer = document.getElementById('happinessAnswer').value.trim().toLowerCase();
+    if (answer === 'bahagia') {
+      // Jawaban benar
+      showCenter('light', 'Jawaban Benar!', 'Kamu telah menyelesaikan semua game!');
+      
+      setTimeout(() => {
+        showPage(5);
+      }, 1500);
+      
+      // Buka kunci foto ketiga
+      unlockPhoto(3);
+      state.game3Completed = true;
+    } else {
+      tiny('Jawaban salah, coba lagi!');
+    }
+  });
+  
+  // Mulai dialog
+  showDialog();
+}
+
+/* Fungsi untuk membuka kunci foto */
+function unlockPhoto(photoNumber) {
+  const photo = document.getElementById(`photo${photoNumber}`);
+  if (photo) {
+    photo.classList.remove('locked');
+    tiny(`Foto ${photoNumber} terbuka!`);
+  }
+}
+
+/* TAMBAHAN: Fungsi fallback untuk foto keempat */
+function fallbackPhoto(photoNumber) {
+  const photo = document.getElementById(`photo${photoNumber}`);
+  if (photo) {
+    const titles = ['Kenangan Kita', 'Selama Ini', 'Gadis Kecil', 'Momen Spesial'];
+    const items = [
+      ['Pertemuan', 'Tertawa', 'Kebersamaan'],
+      ['Kenangan', 'Kita', 'Selama', 'Ini'],
+      ['Gadis', 'Kecil', 'Namanya', 'Senja'],
+      ['Momen', 'Spesial', 'Bersamamu']
+    ];
+    
+    photo.querySelector('.frame-content').innerHTML = `
+      <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(2,16,42,0.9), rgba(4,36,69,0.95));color:white;padding:15px;text-align:center">
+        <div class="frame-title">${titles[photoNumber-1]}</div>
+        <div class="frame-items">
+          ${items[photoNumber-1].map(item => `<div class="frame-item">${item}</div>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+}
+
+/* Fungsi untuk kedip layar */
+function blinkScreen() {
+  const screenBlink = document.getElementById('screenBlink');
+  screenBlink.style.animation = 'none';
+  setTimeout(() => {
+    screenBlink.style.animation = 'blink 0.5s 1';
+  }, 100);
+}
+
+/* Surat Cinta */
+function showLoveLetter() {
+  const loveLetter = document.getElementById('loveLetter');
+  const letterContent = document.getElementById('letterContent');
+  const letterSignature = document.getElementById('letterSignature');
+  
+  const letterText = `Selamat ulang tahun sayangku Nonik..
+
+Di usia 17 tahun ini, aku ingin mengucapkan selamat ulang tahun untukmu. Semoga di usia yang penuh dengan pencarian jati diri ini, kamu menemukan kebahagiaan sejati.
+
+Aku bersyukur bisa mengenalmu dan memiliki kamu di hidupku. Kamu adalah anugerah terindah yang pernah aku terima. Setiap hari bersamamu adalah berkat yang tak ternilai.
+
+Teruslah menjadi dirimu sendiri, jangan pernah berubah karena orang lain. Aku akan selalu mendukungmu dalam setiap langkah dan impianmu. Kamu adalah wanita yang kuat dan hebat.
+
+Jangan pernah ragu untuk bermimpi, karena mimpi adalah awal dari semua keberhasilan. Aku percaya kamu bisa mencapai semua yang kamu inginkan. Kamu layak mendapatkan yang terbaik.
+
+Selamat ulang tahun sayang, semoga panjang umur, sehat selalu, dan selalu bahagia. Aku mencintaimu lebih dari apapun di dunia ini.
+
+Terima kasih sudah menjadi bagian dari hidupku dan memberiku arti cinta yang sesungguhnya.`;
+
+  const signature = `God Bless You,
+
+Surya Danang
+
+"Selamat ulang tahun sayang, semoga panjang umur dan selalu bahagia"`;
+  
+  // Animasi membuka surat
+  setTimeout(() => {
+    loveLetter.classList.add('open');
+    
+    // Animasi mengetik isi surat
+    typeText(letterContent, letterText, () => {
+      // Setelah selesai, tampilkan tanda tangan
+      setTimeout(() => {
+        letterSignature.textContent = signature;
+      }, 1000);
+    });
+  }, 500);
+  
+  // TAMBAHAN: Buka kunci foto keempat
+  unlockPhoto(4);
+}
+
+function typeText(element, text, callback) {
+  element.innerHTML = '';
+  let i = 0;
+  const typing = setInterval(() => {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i);
+      i++;
+    } else {
+      clearInterval(typing);
+      if (callback) callback();
+    }
+  }, 30);
+}
+
+/* Tombol lanjut antar game */
+document.getElementById('nextGame1').addEventListener('click', () => {
+  document.getElementById('game1').classList.remove('active');
+  document.getElementById('game2').classList.add('active');
+  tiny('Selamat! Sekarang lanjut ke Game 2: Perjalanan di Usia 17');
+  initDepressionGame();
+});
+
+document.getElementById('nextGame2').addEventListener('click', () => {
+  document.getElementById('game2').classList.remove('active');
+  document.getElementById('game3').classList.add('active');
+  tiny('Mantap! Sekarang lanjut ke Game 3: Perjalanan Emosional');
+  initEmotionalGame();
+});
+
+document.getElementById('backToHome').addEventListener('click', () => {
+  showPage(2);
+  showCenter('light', 'Terima Kasih', 'Terima kasih telah menyelesaikan semua permainan! 🌹', 5000);
+});
+
+/* Partitur musik interaktif */
+let musicNotes = [];
+let isDraggingStaff = false;
+let startX = 0;
+let scrollLeft = 0;
+
+function initMusicStaff() {
+  const musicStaff = document.getElementById('musicStaff');
+  const musicNotesContainer = document.getElementById('musicNotes');
+  const addNoteBtn = document.getElementById('addNoteBtn');
+  const clearNotesBtn = document.getElementById('clearNotesBtn');
+  const playMusicBtn = document.getElementById('playMusicBtn');
+  
+  // Mouse events for desktop
+  musicStaff.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', endDrag);
+  
+  // Touch events for mobile
+  musicStaff.addEventListener('touchstart', startDrag);
+  document.addEventListener('touchmove', drag);
+  document.addEventListener('touchend', endDrag);
+  
+  // Add note button
+  addNoteBtn.addEventListener('click', addRandomNote);
+  
+  // Clear notes button
+  clearNotesBtn.addEventListener('click', clearAllNotes);
+  
+  // Play music button
+  playMusicBtn.addEventListener('click', playMusicAnimation);
+}
+
+function startDrag(e) {
+  isDraggingStaff = true;
+  startX = (e.pageX || e.touches[0].pageX) - musicStaff.offsetLeft;
+  scrollLeft = musicStaff.scrollLeft;
+  musicStaff.style.cursor = 'grabbing';
+}
+
+function drag(e) {
+  if (!isDraggingStaff) return;
+  e.preventDefault();
+  const x = (e.pageX || e.touches[0].pageX) - musicStaff.offsetLeft;
+  const walk = (x - startX) * 2;
+  musicStaff.scrollLeft = scrollLeft - walk;
+}
+
+function endDrag() {
+  isDraggingStaff = false;
+  musicStaff.style.cursor = 'grab';
+}
+
+function addRandomNote() {
+  const noteSymbols = ['♪', '♫', '♩', '♬'];
+  const note = document.createElement('div');
+  note.classList.add('note');
+  note.textContent = noteSymbols[Math.floor(Math.random() * noteSymbols.length)];
+  
+  // Random position within the staff
+  const leftPos = Math.random() * 80 + 10;
+  const topPos = Math.random() * 70 + 15;
+  
+  note.style.left = `${leftPos}%`;
+  note.style.top = `${topPos}%`;
+  
+  document.getElementById('musicNotes').appendChild(note);
+  musicNotes.push(note);
+  
+  // Animate the note when added
+  note.classList.add('animated');
+  setTimeout(() => {
+    note.classList.remove('animated');
+  }, 500);
+}
+
+function clearAllNotes() {
+  document.getElementById('musicNotes').innerHTML = '';
+  musicNotes = [];
+}
+
+function playMusicAnimation() {
+  if (musicNotes.length === 0) {
+    tiny('Tambahkan not terlebih dahulu!', 2000);
+    return;
+  }
+  
+  musicNotes.forEach((note, index) => {
+    setTimeout(() => {
+      note.classList.add('animated');
+      setTimeout(() => {
+        note.classList.remove('animated');
+      }, 500);
+    }, index * 300);
+  });
+  
+  // Play a simple melody using Web Audio API if available
+  playSimpleMelody();
+}
+
+function playSimpleMelody() {
+  // Create audio context
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  
+  const audioCtx = new AudioContext();
+  
+  // Define a simple melody (frequencies for a C major scale)
+  const frequencies = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+  
+  // Play each note in sequence
+  frequencies.forEach((freq, index) => {
+    setTimeout(() => {
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.frequency.value = freq;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+      
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.5);
+    }, index * 200);
+  });
+}
+
+/* Initial render and restore */
+renderCross();
+setTimeout(()=>{ const f=document.querySelector('#cross input'); if(f) f.focus(); },420);
+
+// Kunci konten sensitif saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+  lockSensitiveContent();
+  initMusicStaff();
+  createComets();
+  
+  // Add some initial notes to the staff
+  setTimeout(() => {
+    for (let i = 0; i < 5; i++) {
+      addRandomNote();
+    }
+  }, 1000);
+});
+
+/* Close settings on outside click */
+document.addEventListener('click',(e)=>{ 
+  if(!settingsPanel.contains(e.target) && !settingsBtn.contains(e.target)) 
+    settingsPanel.classList.remove('show'); 
+});
+
+</script>
+</body>
+</html>
